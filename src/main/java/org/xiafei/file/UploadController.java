@@ -1,6 +1,7 @@
 package org.xiafei.file;
 
 import com.aliyun.oss.OSSClient;
+import com.aliyun.oss.model.ObjectMetadata;
 import com.aliyun.oss.model.PutObjectResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -18,11 +19,11 @@ public class UploadController {
     @RequestMapping("/upload")
     public String upload(@RequestParam("file") MultipartFile file) throws IOException {
         String  filePath=generateFilePath(file.getOriginalFilename());
-        uploadAliOSS(file.getInputStream(), filePath);
-        return "https://xiafei-files.oss-cn-hangzhou.aliyuncs.com/" + filePath;
+        uploadAliOSS(file.getInputStream(), filePath,file.getContentType());
+        return "https://xiafei-web.oss-cn-hangzhou.aliyuncs.com/" + filePath;
     }
 
-    private void uploadAliOSS(InputStream inputStream, String key) throws FileNotFoundException {
+    private void uploadAliOSS(InputStream inputStream, String key,String contentType) throws FileNotFoundException {
         // Endpoint以杭州为例，其它Region请按实际情况填写。
         String endpoint = "http://oss-cn-hangzhou.aliyuncs.com";
 // 云账号AccessKey有所有API访问权限，建议遵循阿里云安全最佳实践，创建并使用RAM子账号进行API访问或日常运维，请登录 https://ram.console.aliyun.com 创建。
@@ -33,7 +34,9 @@ public class UploadController {
         OSSClient ossClient = new OSSClient(endpoint, accessKeyId, accessKeySecret);
 
 // 上传文件流。
-        PutObjectResult putObjectResult = ossClient.putObject("xiafei-files", key, inputStream);
+        ObjectMetadata objectMetadata=new ObjectMetadata();
+        objectMetadata.setHeader("Content-Disposition","inline");
+        PutObjectResult putObjectResult = ossClient.putObject("xiafei-web", key, inputStream,objectMetadata);
 // 关闭OSSClient。
         ossClient.shutdown();
     }
