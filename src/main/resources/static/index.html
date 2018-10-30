@@ -36,9 +36,14 @@
     #result input {
         width: 360px;
     }
-    #uploadImage{
+
+    #uploadImage {
         max-width: 483px;
         margin-top: 30px;
+    }
+    #progressDiv{
+        margin: 10px auto;
+        width: 487px;
     }
 </style>
 <body>
@@ -54,18 +59,23 @@
 
     <div id="filePicker">选择图片</div>
 </div>
+<div class="progress" id="progressDiv">
+<div id="progress" class="progress-bar progress-bar-striped" role="progressbar" style="width: 10%" aria-valuenow="10"
+     aria-valuemin="0" aria-valuemax="100"></div>
+</div>
+
 
 <div id="result" style="display: none">
-
     <div class="input-group">
-        <input  id="copyContext" type="text" class="form-control"aria-label="Recipient's username with two button addons" aria-describedby="button-addon4">
+        <input id="copyContext" type="text" class="form-control"
+               aria-label="Recipient's username with two button addons" aria-describedby="button-addon4">
         <div class="input-group-append" id="button-addon4">
             <button data-clipboard-target="#copyContext" class="btn btn-outline-secondary" type="button">Copy</button>
             <button id="copyMarkdown" class="btn btn-outline-secondary" type="button">Markdown</button>
         </div>
     </div>
 
-    <img id="uploadImage" >
+    <img id="uploadImage">
 </div>
 </body>
 <script>
@@ -80,18 +90,30 @@
         // 文件接收服务端。
         server: '/upload',
         pick: '#filePicker',
-        dnd:'#fileFrame',
+        dnd: '#fileFrame',
         paste: document.body
 
     });
+
+    uploader.on('startUpload', function (file, percentage) {
+        $('#progressDiv').show();
+    });
+
+    uploader.on('uploadProgress', function (file, percentage) {
+        $('#progress').css('width', percentage * 100 + '%');
+    });
+
+
     uploader.on('uploadSuccess', function (file, response) {
-        document.getElementById('result').style.display='block';
-        document.getElementById("uploadImage").setAttribute('src',response._raw);
+        document.getElementById('result').style.display = 'block';
+        document.getElementById("uploadImage").setAttribute('src', response._raw);
         document.getElementById("copyContext").value = response._raw;
-        document.getElementById('copyMarkdown').setAttribute('data-clipboard-text','![]('+response._raw+')');
+        document.getElementById('copyMarkdown').setAttribute('data-clipboard-text', '![](' + response._raw + ')');
+        $('#progressDiv').hide();
         // history.pushState(history.state, document.title, response._raw);
     });
 
     new ClipboardJS('.btn');
+    $('#progressDiv').hide();
 </script>
 </html>
