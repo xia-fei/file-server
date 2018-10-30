@@ -105,12 +105,18 @@
 
 
     uploader.on('uploadSuccess', function (file, response) {
-        document.getElementById('result').style.display = 'block';
         document.getElementById("uploadImage").setAttribute('src', response._raw);
         document.getElementById("copyContext").value = response._raw;
         document.getElementById('copyMarkdown').setAttribute('data-clipboard-text', '![](' + response._raw + ')');
+        document.getElementById('result').style.display = 'block';
+    });
+
+    uploader.on('uploadError', function (file,reason) {
+        alert("上传失败"+reason);
+    });
+
+    uploader.on('uploadComplete', function (file) {
         $('#progressDiv').hide();
-        // history.pushState(history.state, document.title, response._raw);
     });
 
     new ClipboardJS('.btn');
