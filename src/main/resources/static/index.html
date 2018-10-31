@@ -121,5 +121,12 @@
 
     new ClipboardJS('.btn');
     $('#progressDiv').hide();
+
+    (function() {
+        const hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?13f02310ca9dd9767d91fc9871e30f21";
+        const s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+    })();
 </script>
 </html>
