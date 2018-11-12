@@ -41,7 +41,8 @@
         max-width: 483px;
         margin-top: 30px;
     }
-    #progressDiv{
+
+    #progressDiv {
         margin: 10px auto;
         width: 487px;
     }
@@ -60,8 +61,9 @@
     <div id="filePicker">选择图片</div>
 </div>
 <div class="progress" id="progressDiv">
-<div id="progress" class="progress-bar progress-bar-striped" role="progressbar" style="width: 10%" aria-valuenow="10"
-     aria-valuemin="0" aria-valuemax="100"></div>
+    <div id="progress" class="progress-bar progress-bar-striped" role="progressbar" style="width: 10%"
+         aria-valuenow="10"
+         aria-valuemin="0" aria-valuemax="100"></div>
 </div>
 
 
@@ -79,20 +81,21 @@
 </div>
 </body>
 <script>
-    var host='https://xiafei-web.oss-cn-hangzhou.aliyuncs.com';
+    var host = 'https://xiafei-web.oss-cn-hangzhou.aliyuncs.com';
 
     function getAccessData() {
         $.ajaxSettings.async = false;
-        var reqParam={'success_action_status':'200'};
-        $.getJSON("/getAccess",{},function(data){
-            reqParam.OSSAccessKeyId=data.accessid;
-            reqParam.policy=data.policy;
-            reqParam.signature=data.signature;
+        var reqParam = {'success_action_status': '200'};
+        $.getJSON("/getAccess", {}, function (data) {
+            reqParam.OSSAccessKeyId = data.accessid;
+            reqParam.policy = data.policy;
+            reqParam.signature = data.signature;
         });
         $.ajaxSettings.async = true;
         return reqParam;
     }
-    var reqParam=getAccessData();
+
+    var reqParam = getAccessData();
     var uploader = WebUploader.create({
         // 选完文件后，是否自动上传。
         auto: true,
@@ -100,7 +103,7 @@
         swf: '/webuploader-0.1.5' + '/js/Uploader.swf',
         // 文件接收服务端。
         server: host,
-        formData:reqParam,
+
         pick: '#filePicker',
         dnd: '#fileFrame',
         paste: document.body
@@ -108,7 +111,8 @@
     });
 
     uploader.on('uploadStart', function (file) {
-        uploader.options.formData.key='file-server/'+new Date().getTime()+'.'+file.ext;
+        uploader.options.formData = reqParam;
+        uploader.options.formData.key = 'file-server/' + new Date().getTime() + '.' + file.ext;
         $('#progressDiv').show();
     });
 
@@ -118,15 +122,15 @@
 
 
     uploader.on('uploadSuccess', function (file, response) {
-        var fileUrl= host+'/'+uploader.options.formData.key;
+        var fileUrl = host + '/' + uploader.options.formData.key;
         document.getElementById("uploadImage").setAttribute('src', fileUrl);
         document.getElementById("copyContext").value = fileUrl;
         document.getElementById('copyMarkdown').setAttribute('data-clipboard-text', '![](' + fileUrl + ')');
         document.getElementById('result').style.display = 'block';
     });
 
-    uploader.on('uploadError', function (file,reason) {
-        alert("上传失败"+reason);
+    uploader.on('uploadError', function (file, reason) {
+        alert("上传失败" + reason);
     });
 
     uploader.on('uploadComplete', function (file) {
@@ -134,11 +138,10 @@
     });
 
 
-
     new ClipboardJS('.btn');
     $('#progressDiv').hide();
 
-    (function() {
+    (function () {
         const hm = document.createElement("script");
         hm.src = "https://hm.baidu.com/hm.js?13f02310ca9dd9767d91fc9871e30f21";
         const s = document.getElementsByTagName("script")[0];
