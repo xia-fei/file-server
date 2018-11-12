@@ -83,7 +83,7 @@
 <script>
     var host = 'https://xiafei-web.oss-cn-hangzhou.aliyuncs.com';
 
-    function getAccessData() {
+    function getFormData() {
         $.ajaxSettings.async = false;
         var reqParam = {'success_action_status': '200'};
         $.getJSON("/getAccess", {}, function (data) {
@@ -94,8 +94,6 @@
         $.ajaxSettings.async = true;
         return reqParam;
     }
-
-    var reqParam = getAccessData();
     var uploader = WebUploader.create({
         // 选完文件后，是否自动上传。
         auto: true,
@@ -111,7 +109,7 @@
     });
 
     uploader.on('uploadStart', function (file) {
-        uploader.options.formData = reqParam;
+        uploader.options.formData = getFormData();
         uploader.options.formData.key = 'file-server/' + new Date().getTime() + '.' + file.ext;
         $('#progressDiv').show();
     });
