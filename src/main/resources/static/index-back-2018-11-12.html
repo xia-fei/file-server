@@ -79,36 +79,23 @@
 </div>
 </body>
 <script>
-    var host='https://xiafei-web.oss-cn-hangzhou.aliyuncs.com';
-
-    function getAccessData() {
-        $.ajaxSettings.async = false;
-        var reqParam={'success_action_status':'200'};
-        $.getJSON("/getAccess",{},function(data){
-            reqParam.OSSAccessKeyId=data.accessid;
-            reqParam.policy=data.policy;
-            reqParam.signature=data.signature;
-        });
-        $.ajaxSettings.async = true;
-        return reqParam;
-    }
-    var reqParam=getAccessData();
     var uploader = WebUploader.create({
+
         // 选完文件后，是否自动上传。
         auto: true,
+
         // swf文件路径
         swf: '/webuploader-0.1.5' + '/js/Uploader.swf',
+
         // 文件接收服务端。
-        server: host,
-        formData:reqParam,
+        server: '/upload',
         pick: '#filePicker',
         dnd: '#fileFrame',
         paste: document.body
 
     });
 
-    uploader.on('uploadStart', function (file) {
-        uploader.options.formData.key='file-server/'+new Date().getTime()+'.'+file.ext;
+    uploader.on('startUpload', function (file, percentage) {
         $('#progressDiv').show();
     });
 
@@ -118,10 +105,9 @@
 
 
     uploader.on('uploadSuccess', function (file, response) {
-        var fileUrl= host+'/'+uploader.options.formData.key;
-        document.getElementById("uploadImage").setAttribute('src', fileUrl);
-        document.getElementById("copyContext").value = fileUrl;
-        document.getElementById('copyMarkdown').setAttribute('data-clipboard-text', '![](' + fileUrl + ')');
+        document.getElementById("uploadImage").setAttribute('src', response._raw);
+        document.getElementById("copyContext").value = response._raw;
+        document.getElementById('copyMarkdown').setAttribute('data-clipboard-text', '![](' + response._raw + ')');
         document.getElementById('result').style.display = 'block';
     });
 
@@ -132,8 +118,6 @@
     uploader.on('uploadComplete', function (file) {
         $('#progressDiv').hide();
     });
-
-
 
     new ClipboardJS('.btn');
     $('#progressDiv').hide();
